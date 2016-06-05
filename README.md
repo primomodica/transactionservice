@@ -1,4 +1,4 @@
-# Transactionservice Api Wiki
+# Transactionservice Api
 
 ## Building The Project
 
