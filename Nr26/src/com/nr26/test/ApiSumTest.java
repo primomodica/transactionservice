@@ -1,4 +1,4 @@
-package main.test;
+package com.nr26.test;
 
 import static org.junit.Assert.*;
 
@@ -39,6 +39,7 @@ public class ApiSumTest {
 		// all linked
 
 		JSONObject resp = new JSONObject(getSum(1));
+		//with doulbe is better to round when you have to compare
 		double sum = Math.round(resp.getDouble("sum"));
 		double expectedSum = Math.round(i * TRANSACTION_AMOUNT);
 		assertTrue(sum == expectedSum);
@@ -83,6 +84,16 @@ public class ApiSumTest {
 		resp = new JSONObject(getSum(3));
 		sum = Math.round(resp.getDouble("sum"));
 		expectedSum = Math.round(10668.8111);
+		assertTrue(sum == expectedSum);
+		//the node 5 has as child 6
+		resp = new JSONObject(getSum(5));
+		sum = Math.round(resp.getDouble("sum"));
+		expectedSum = Math.round(10667.8111);
+		assertTrue(sum == expectedSum);
+		//the node 6 has no child 
+		resp = new JSONObject(getSum(6));
+		sum = Math.round(resp.getDouble("sum"));
+		expectedSum = Math.round(667.7);
 		assertTrue(sum == expectedSum);
 		System.out.println("The expected response is: " + expectedSum + " and from server we had: " + sum);
 		// 9 has no child

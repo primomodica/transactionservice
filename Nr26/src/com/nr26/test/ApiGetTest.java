@@ -1,4 +1,4 @@
-package main.test;
+package com.nr26.test;
 
 import static org.junit.Assert.*;
 
@@ -9,7 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.json.JSONObject;
@@ -17,14 +17,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class ApiTypeTest {
-	private String[] types = { "shopping", "services", "taxes", "food", "amusement", "sport", "travel" };
-	private ArrayList<Integer> shopping_ids = new ArrayList<Integer>();
-	private ArrayList<Integer> taxes_ids = new ArrayList<Integer>();
-	private ArrayList<Integer> amusement_ids = new ArrayList<Integer>();
-	private final static int shop = 10;
-	private final static int taxes = 15;
-	private final static int amus = 22;
+import com.google.gson.JsonObject;
+
+public class ApiGetTest {
+	HashMap<Integer, String> existingTransaction = new HashMap<Integer, String>();
 	@BeforeClass
 	public static void setUp(){
 		Utils.resetTansactions();
@@ -32,64 +28,38 @@ public class ApiTypeTest {
 	@Test
 	public void test() {
 		int i = 0;
-		while (i < shop) {
+		while (i < 10) {
 			i++;
-			// type Shopping
-			shopping_ids.add(i);
-			generateTransactionType(i, 0);
+			String newJson = generateTransaction(i);
 		}
-		while (i < taxes) {
-			i++;
-			// type Taxes
-			taxes_ids.add(i);
-			generateTransactionType(i, 2);
+		for (Entry<Integer, String> entry : existingTransaction.entrySet()) {
+			JSONObject transaction = new JSONObject(getTransaction(entry.getKey()));
+			JSONObject value = new JSONObject(entry.getValue());
+			System.out.println("The expected response is: " + value.toString() + " and from server we had: " + transaction.toString());
+			assertTrue(transaction.toString().equals(value.toString()));
 		}
-		while (i < amus) {
-			i++;
-			// type Amusement
-			amusement_ids.add(i);
-			generateTransactionType(i, 4);
-		}
-		
-		String ids = getTypeArray("shopping");
-		assertTrue(ids.contains("1"));
-		assertTrue(ids.contains("2"));
-		assertTrue(ids.contains("3"));
-		assertTrue(ids.contains("4"));
-		assertTrue(ids.contains("5"));
-		assertTrue(ids.contains("6"));
-		assertTrue(ids.contains("7"));
-		assertTrue(ids.contains("8"));
-		assertTrue(ids.contains("9"));
-		assertTrue(ids.contains("10"));
-
-		
-
-		ids = getTypeArray("taxes");
-		assertTrue(ids.contains("11"));
-		assertTrue(ids.contains("12"));
-		assertTrue(ids.contains("13"));
-		assertTrue(ids.contains("14"));
-		assertTrue(ids.contains("15"));
-
-
-		ids = getTypeArray("amusement");
-		assertTrue(ids.contains("16"));
-		assertTrue(ids.contains("17"));
-		assertTrue(ids.contains("18"));
-		assertTrue(ids.contains("19"));
-		assertTrue(ids.contains("20"));
-		assertTrue(ids.contains("21"));
-		assertTrue(ids.contains("22"));
-
 	}
 
-	private void generateTransactionType(int id, int picker) {
+	public String generateTransaction(int trans_id) {
+		String[] types = { "shopping", "services", "taxes", "food", "amusement", "sport", "travel" };
+		int typePicker = (int) (Math.random() * 6);
 
-		String transaction = "{ \"amount\": " + (Math.random() * 10) + ", \"type\":" + types[picker] + " }";
+		String transaction = "{ \"amount\": " + (Math.random() * 10) + ", \"type\":" + types[typePicker];
+		if (Math.random() > 0.5 && !existingTransaction.isEmpty()) {
+			int j;
+			Random randomGenerator = new Random();
+			do {
+				j = randomGenerator.nextInt(existingTransaction.size())+1;
+			} while (j == trans_id && existingTransaction.containsKey(j));
+			transaction = new String(transaction + ", \"parent_id\":" + j + " }");
+		} else {
+			transaction = new String(transaction + " }");
+		}
 		JSONObject jsonObject = new JSONObject(transaction);
+		existingTransaction.put(trans_id, jsonObject.toString());
+
 		try {
-			URL url = new URL("http://localhost:8080/transactionservice/transaction/" + id);
+			URL url = new URL("http://localhost:8080/transactionservice/transaction/" + trans_id);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
 			connection.setRequestMethod("PUT");
@@ -112,11 +82,12 @@ public class ApiTypeTest {
 			System.out.println("\n Error while calling  REST Service");
 			System.out.println(e);
 		}
+		return transaction;
 	}
 
-	private String getTypeArray(String type) {
+	private String getTransaction(int id) {
 		try {
-			URL url = new URL("http://localhost:8080/transactionservice/types/" + type);
+			URL url = new URL("http://localhost:8080/transactionservice/transaction/" + id);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
 			connection.setRequestMethod("GET");

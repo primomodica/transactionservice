@@ -1,4 +1,32 @@
 package com.nr26.service;
+/**
+ * API specifications:
+ * 
+ * GET /transactionservice/transaction/$transaction_id
+ * Returns:
+ * { "amount":double,"type":string,"parent_id":long }
+ *
+ * A json list of all transaction ids that share the same type $type.
+ * 
+ * GET /transactionservice/types/$type
+ * Returns:
+ * [ long, long, .... ]
+ *
+ * A sum of all transactions that are transitively linked by their parent_id to $transaction_id.
+ * GET /transactionservice/sum/$transaction_id
+ * Returns
+ * { "sum": double }
+ *
+ * PUT /transactionservice/transaction/$transaction_id
+ * Body:
+ * { "amount":double,"type":string,"parent_id":long }
+ * where:
+ * transaction_id is a long specifying a new transaction
+ * amount is a double specifying the amount
+ * type is a string specifying a type of the transaction.
+ * parent_id is an optional long that may specify the parent transaction of this transaction.
+ *
+ */
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

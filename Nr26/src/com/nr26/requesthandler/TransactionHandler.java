@@ -1,6 +1,21 @@
 package com.nr26.requesthandler;
-
-import java.util.HashMap;
+/**
+ * This is the class that handle the transactions creating, checking them and store in memory.
+ * 
+ * Insertion Operation:
+ * This operation consist into insert an element in a TreeMap -> O(1)
+ *
+ * Transaction Retrieval:
+ * This operation consists into get an element from a map -> O(1)
+ *
+ * Get sum of "transitively linked transaction":
+ * In this case the handler calls a DFS that searches and sum the transactions in a 
+ * recursive way. In the worst case we have a "transaction chain" like
+ * 1 <- 2 <- 3 <- 4 <- [...]
+ * In this case the algorithm "traverse all nodes" time complexity -> O(n)
+ *
+ */
+import java.util.TreeMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,11 +32,13 @@ public class TransactionHandler {
 	
 	public final static TransactionHandler TrsansacttionHandlerINSTANCE = new TransactionHandler();
 	private final JsonObject response; 
-	private final HashMap<Long, Transaction> transactionHistory;
+	//A TreeMap that implements SortedMap and orders using the ids
+	//suits to our case in which for some extent order of transactions may be important
+	private final TreeMap<Long, Transaction> transactionHistory;
 	
 	private TransactionHandler(){
 		response = new JsonObject();
-		transactionHistory  = new HashMap<Long, Transaction>();
+		transactionHistory  = new TreeMap<Long, Transaction>();
 	}
 
 	public JsonObject newTransaction(Long trans_id, String tr) {
