@@ -1,5 +1,7 @@
 package com.nr26.test;
-
+/*
+ * To make the tests work change the server.xml -> context -> path to path="/"
+ */
 import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
