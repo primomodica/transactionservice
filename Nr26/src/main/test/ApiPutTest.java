@@ -1,4 +1,4 @@
-package com.nr26.tests;
+package main.test;
 
 import static org.junit.Assert.*;
 
@@ -9,7 +9,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Random;
 
 import org.json.JSONObject;
@@ -17,26 +16,25 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.gson.JsonObject;
-
-public class ApiGetTest {
+public class ApiPutTest {
 	HashMap<Integer, String> existingTransaction = new HashMap<Integer, String>();
-	@BeforeClass
-	public static void setUp(){
-		Utils.resetTansactions();
-	}
+	private final static int NUMBER_OF_TRANSACTION = 10;
+	 @BeforeClass
+	 public static void setUp(){
+	 Utils.resetTansactions();
+	 }
+	
 	@Test
-	public void test() {
+	public void testPut() {
 		int i = 0;
-		while (i < 10) {
+		while (i < NUMBER_OF_TRANSACTION) {
+ 
 			i++;
-			String newJson = generateTransaction(i);
-		}
-		for (Entry<Integer, String> entry : existingTransaction.entrySet()) {
-			JSONObject transaction = new JSONObject(getTransaction(entry.getKey()));
-			JSONObject value = new JSONObject(entry.getValue());
-			System.out.println("The expected response is: " + value.toString() + " and from server we had: " + transaction.toString());
-			assertTrue(transaction.toString().equals(value.toString()));
+			JSONObject newJson = new JSONObject(generateTransaction(i));
+			String attended = "{\"status\":\"ok\"}";
+			System.out.println("The expected response is: " + attended + " and from server we had: " + newJson.toString());
+			assertTrue(attended.equals(newJson.toString()));
+
 		}
 	}
 
@@ -49,7 +47,7 @@ public class ApiGetTest {
 			int j;
 			Random randomGenerator = new Random();
 			do {
-				j = randomGenerator.nextInt(existingTransaction.size())+1;
+				j = randomGenerator.nextInt(existingTransaction.size()) + 1;
 			} while (j == trans_id && existingTransaction.containsKey(j));
 			transaction = new String(transaction + ", \"parent_id\":" + j + " }");
 		} else {
@@ -59,7 +57,7 @@ public class ApiGetTest {
 		existingTransaction.put(trans_id, jsonObject.toString());
 
 		try {
-			URL url = new URL("http://localhost:8080/Nr26/nr26/transactionservice/transaction/" + trans_id);
+			URL url = new URL("http://localhost:8080/transactionservice/transaction/" + trans_id);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
 			connection.setRequestMethod("PUT");
@@ -75,35 +73,12 @@ public class ApiGetTest {
 			System.out.println();
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			String resp = in.readLine();
-			String attended = "{\"status\":\"ok\"}";
-			assertTrue(attended.equals(resp));
-			in.close();
-		} catch (Exception e) {
-			System.out.println("\n Error while calling  REST Service");
-			System.out.println(e);
-		}
-		return transaction;
-	}
-
-	private String getTransaction(int id) {
-		try {
-			URL url = new URL("http://localhost:8080/Nr26/nr26/transactionservice/transaction/" + id);
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setDoOutput(true);
-			connection.setRequestMethod("GET");
-			connection.setRequestProperty("Content-Type", "application/json");
-			connection.setConnectTimeout(5000);
-			connection.setReadTimeout(5000);
-			System.out.println(connection.getURL());
-			System.out.println();
-			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String resp = in.readLine();
 			in.close();
 			return resp;
 		} catch (Exception e) {
 			System.out.println("\n Error while calling  REST Service");
 			System.out.println(e);
 		}
-		return "";
+		return null;
 	}
 }

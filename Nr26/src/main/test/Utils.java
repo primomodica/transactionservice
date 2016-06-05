@@ -1,4 +1,4 @@
-package com.nr26.tests;
+package main.test;
 
 import static org.junit.Assert.*;
 
@@ -23,7 +23,7 @@ public class Utils {
 	
 	public static void  resetTansactions() {
 		try {
-			URL url = new URL("http://localhost:8080/Nr26/nr26/transactionservice/delete");
+			URL url = new URL("http://localhost:8080/transactionservice/delete");
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
 			connection.setRequestMethod("GET");

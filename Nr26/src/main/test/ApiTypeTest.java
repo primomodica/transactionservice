@@ -1,4 +1,4 @@
-package com.nr26.tests;
+package main.test;
 
 import static org.junit.Assert.*;
 
@@ -89,7 +89,7 @@ public class ApiTypeTest {
 		String transaction = "{ \"amount\": " + (Math.random() * 10) + ", \"type\":" + types[picker] + " }";
 		JSONObject jsonObject = new JSONObject(transaction);
 		try {
-			URL url = new URL("http://localhost:8080/Nr26/nr26/transactionservice/transaction/" + id);
+			URL url = new URL("http://localhost:8080/transactionservice/transaction/" + id);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
 			connection.setRequestMethod("PUT");
@@ -116,7 +116,7 @@ public class ApiTypeTest {
 
 	private String getTypeArray(String type) {
 		try {
-			URL url = new URL("http://localhost:8080/Nr26/nr26/transactionservice/types/" + type);
+			URL url = new URL("http://localhost:8080/transactionservice/types/" + type);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
 			connection.setRequestMethod("GET");

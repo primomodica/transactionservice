@@ -1,4 +1,4 @@
-package com.nr26.tests;
+package main.test;
 
 import static org.junit.Assert.*;
 
@@ -126,7 +126,7 @@ public class ApiSumTest {
 			JSONObject jsonObject = new JSONObject(t);
 
 			try {
-				URL url = new URL("http://localhost:8080/Nr26/nr26/transactionservice/transaction/" + i);
+				URL url = new URL("http://localhost:8080/transactionservice/transaction/" + i);
 				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 				connection.setDoOutput(true);
 				connection.setRequestMethod("PUT");
@@ -168,7 +168,7 @@ public class ApiSumTest {
 		existingTransaction.put(trans_id, jsonObject.toString());
 
 		try {
-			URL url = new URL("http://localhost:8080/Nr26/nr26/transactionservice/transaction/" + trans_id);
+			URL url = new URL("http://localhost:8080/transactionservice/transaction/" + trans_id);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
 			connection.setRequestMethod("PUT");
@@ -195,7 +195,7 @@ public class ApiSumTest {
 
 	private String getSum(int id) {
 		try {
-			URL url = new URL("http://localhost:8080/Nr26/nr26/transactionservice/sum/" + id);
+			URL url = new URL("http://localhost:8080/transactionservice/sum/" + id);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
 			connection.setRequestMethod("GET");
